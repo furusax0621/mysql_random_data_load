@@ -1,11 +1,9 @@
 package testutils
 
 import (
-	"bufio"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,7 +15,7 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
-	version "github.com/hashicorp/go-version"
+	"github.com/hashicorp/go-version"
 )
 
 var (
@@ -112,20 +110,6 @@ func GetMinorVersion(tb testing.TB, db *sql.DB) *version.Version {
 	return v
 }
 
-func LoadFile(tb testing.TB, filename string) []string {
-	file := filepath.Join("testdata", filename)
-	fh, err := os.Open(file)
-	lines := []string{}
-	reader := bufio.NewReader(fh)
-
-	line, err := reader.ReadString('\n')
-	for err == nil {
-		lines = append(lines, strings.TrimRight(line, "\n"))
-		line, err = reader.ReadString('\n')
-	}
-	return lines
-}
-
 func UpdateSampleFile(tb testing.TB, filename string, lines []string) {
 	if us, _ := strconv.ParseBool(os.Getenv("UPDATE_SAMPLES")); !us {
 		return
@@ -156,7 +140,7 @@ func WriteFile(tb testing.TB, filename string, lines []string) {
 func LoadQueriesFromFile(tb testing.TB, filename string) {
 	conn := GetMySQLConnection(tb)
 	file := filepath.Join("testdata", filename)
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		fmt.Printf("%s cannot load json file %q: %s\n\n", caller(), file, err)
 		tb.FailNow()
@@ -170,7 +154,7 @@ func LoadQueriesFromFile(tb testing.TB, filename string) {
 
 func LoadJson(tb testing.TB, filename string, dest interface{}) {
 	file := filepath.Join("testdata", filename)
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		fmt.Printf("%s cannot load json file %q: %s\n\n", caller(), file, err)
 	}
@@ -188,7 +172,7 @@ func WriteJson(tb testing.TB, filename string, data interface{}) {
 		fmt.Printf("%s cannot marshal %T into %q: %s\n\n", caller(), data, file, err)
 		tb.FailNow()
 	}
-	err = ioutil.WriteFile(file, buf, os.ModePerm)
+	err = os.WriteFile(file, buf, os.ModePerm)
 	if err != nil {
 		fmt.Printf("%s cannot write file %q: %s\n\n", caller(), file, err)
 		tb.FailNow()

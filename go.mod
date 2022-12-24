@@ -9,7 +9,6 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/icrowley/fake v0.0.0-20221112152111-d7b7e2276db2
 	github.com/kr/pretty v0.3.1
-	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
