@@ -36,7 +36,7 @@ func TestParse(t *testing.T) {
 	}
 	tu.LoadJson(t, sampleFile, &want)
 
-	tu.Equals(t, table, want)
+	tu.Equals(t, want, table)
 }
 
 func TestGetIndexes(t *testing.T) {
@@ -49,7 +49,7 @@ func TestGetIndexes(t *testing.T) {
 		tu.WriteJson(t, "indexes.json", idx)
 	}
 	tu.Ok(t, err)
-	tu.Equals(t, idx, want)
+	tu.Equals(t, want, idx)
 }
 
 func TestGetTriggers(t *testing.T) {
@@ -77,5 +77,5 @@ func TestGetTriggers(t *testing.T) {
 		tu.WriteJson(t, sampleFile, triggers)
 	}
 	tu.Ok(t, err)
-	tu.Equals(t, triggers, want)
+	tu.Equals(t, want, triggers)
 }

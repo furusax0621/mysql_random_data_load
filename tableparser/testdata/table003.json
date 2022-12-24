@@ -42,7 +42,7 @@
         "String": "",
         "Valid": false
       },
-      "ColumnType": "smallint(5) unsigned",
+      "ColumnType": "smallint unsigned",
       "ColumnKey": "PRI",
       "Extra": "auto_increment",
       "Privileges": "select,insert,update,references",
@@ -88,11 +88,11 @@
         "Valid": false
       },
       "CharacterSetName": {
-        "String": "utf8",
+        "String": "utf8mb3",
         "Valid": true
       },
       "CollationName": {
-        "String": "utf8_general_ci",
+        "String": "utf8mb3_general_ci",
         "Valid": true
       },
       "ColumnType": "varchar(255)",
@@ -141,11 +141,11 @@
         "Valid": false
       },
       "CharacterSetName": {
-        "String": "utf8",
+        "String": "utf8mb3",
         "Valid": true
       },
       "CollationName": {
-        "String": "utf8_general_ci",
+        "String": "utf8mb3_general_ci",
         "Valid": true
       },
       "ColumnType": "text",
@@ -201,7 +201,7 @@
         "String": "",
         "Valid": false
       },
-      "ColumnType": "year(4)",
+      "ColumnType": "year",
       "ColumnKey": "",
       "Extra": "",
       "Privileges": "select,insert,update,references",
@@ -254,7 +254,7 @@
         "String": "",
         "Valid": false
       },
-      "ColumnType": "tinyint(3) unsigned",
+      "ColumnType": "tinyint unsigned",
       "ColumnKey": "MUL",
       "Extra": "",
       "Privileges": "select,insert,update,references",
@@ -313,7 +313,7 @@
         "String": "",
         "Valid": false
       },
-      "ColumnType": "tinyint(3) unsigned",
+      "ColumnType": "tinyint unsigned",
       "ColumnKey": "MUL",
       "Extra": "",
       "Privileges": "select,insert,update,references",
@@ -372,7 +372,7 @@
         "String": "",
         "Valid": false
       },
-      "ColumnType": "tinyint(3) unsigned",
+      "ColumnType": "tinyint unsigned",
       "ColumnKey": "",
       "Extra": "",
       "Privileges": "select,insert,update,references",
@@ -478,7 +478,7 @@
         "String": "",
         "Valid": false
       },
-      "ColumnType": "smallint(5) unsigned",
+      "ColumnType": "smallint unsigned",
       "ColumnKey": "",
       "Extra": "",
       "Privileges": "select,insert,update,references",
@@ -577,11 +577,11 @@
         "Valid": false
       },
       "CharacterSetName": {
-        "String": "utf8",
+        "String": "utf8mb3",
         "Valid": true
       },
       "CollationName": {
-        "String": "utf8_general_ci",
+        "String": "utf8mb3_general_ci",
         "Valid": true
       },
       "ColumnType": "enum('G','PG','PG-13','R','NC-17')",
@@ -636,11 +636,11 @@
         "Valid": false
       },
       "CharacterSetName": {
-        "String": "utf8",
+        "String": "utf8mb3",
         "Valid": true
       },
       "CollationName": {
-        "String": "utf8_general_ci",
+        "String": "utf8mb3_general_ci",
         "Valid": true
       },
       "ColumnType": "set('Trailers','Commentaries','Deleted Scenes','Behind the Scenes')",
@@ -703,7 +703,7 @@
       },
       "ColumnType": "timestamp",
       "ColumnKey": "",
-      "Extra": "on update CURRENT_TIMESTAMP",
+      "Extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
       "Privileges": "select,insert,update,references",
       "ColumnComment": "",
       "GenerationExpression": "",

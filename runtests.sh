@@ -16,7 +16,7 @@ for PORT in 3306 3307 3308; do
     echo "### MySQL at port ${PORT}"
     echo "##########################"
     wait_mysql $PORT
-    export TEST_DSN="root:@tcp(127.1:${PORT})/sakila?parseTime=true"
+    export TEST_DSN="root:root@tcp(127.1:${PORT})/sakila?parseTime=true"
     go test -v ./...
 done
 
