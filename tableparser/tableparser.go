@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -172,7 +171,7 @@ func (t *Table) parse() error {
 
 	cols, err := rows.Columns()
 	if err != nil {
-		return errors.Wrap(err, "Cannot get column names")
+		return fmt.Errorf("cannot get column names: %w", err)
 	}
 
 	for rows.Next() {
@@ -297,7 +296,7 @@ func getIndexes(db *sql.DB, schema, tableName string) (map[string]Index, error) 
 		}
 	}
 	if err := rows.Close(); err != nil {
-		return nil, errors.Wrap(err, "Cannot close query rows at getIndexes")
+		return nil, fmt.Errorf("cannot close query rows at getIndexes: %w", err)
 	}
 
 	return indexes, nil
