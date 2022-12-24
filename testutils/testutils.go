@@ -1,7 +1,6 @@
 package testutils
 
 import (
-	"bufio"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -109,20 +108,6 @@ func GetMinorVersion(tb testing.TB, db *sql.DB) *version.Version {
 		tb.FailNow()
 	}
 	return v
-}
-
-func LoadFile(tb testing.TB, filename string) []string {
-	file := filepath.Join("testdata", filename)
-	fh, err := os.Open(file)
-	lines := []string{}
-	reader := bufio.NewReader(fh)
-
-	line, err := reader.ReadString('\n')
-	for err == nil {
-		lines = append(lines, strings.TrimRight(line, "\n"))
-		line, err = reader.ReadString('\n')
-	}
-	return lines
 }
 
 func UpdateSampleFile(tb testing.TB, filename string, lines []string) {

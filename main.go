@@ -55,10 +55,7 @@ type mysqlOptions struct {
 }
 
 var (
-	opts *cliOptions
-
-	validFunctions = []string{"int", "string", "date", "date_in_range"}
-	maxValues      = map[string]int64{
+	maxValues = map[string]int64{
 		"tinyint":   0xF,
 		"smallint":  0xFF,
 		"mediumint": 0x7FFFF,
