@@ -34,6 +34,8 @@ jobs:
         with:
           go-version: "1.19"
           cache: true
+      - name: prepare test
+        run: mysql -uroot -proot -h127.0.0.1 -P3306 sakila < ./testdata/schema/sakila.sql
       - name: test with MySQL ${{ matrix.mysql }}
         run: go test -v -race ./...
         env:
