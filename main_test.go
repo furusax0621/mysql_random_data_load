@@ -73,7 +73,7 @@ func TestGenerateInsertStmt(t *testing.T) {
 	want := "INSERT IGNORE INTO `sakila`.`film` " +
 		"(`title`,`description`,`release_year`,`language_id`," +
 		"`original_language_id`,`rental_duration`,`rental_rate`," +
-		"`length`,`replacement_cost`,`rating`,`special_featestutilsres`," +
+		"`length`,`replacement_cost`,`rating`,`special_features`," +
 		"`last_update`) VALUES "
 
 	query := generateInsertStmt(table)
