@@ -42,9 +42,7 @@ type RandomDateInRange struct {
 }
 
 func (r *RandomDateInRange) Value() interface{} {
-	rand.Seed(time.Now().UnixNano())
-	var randomSeconds int64
-	randomSeconds = rand.Int63n(oneYear) + rand.Int63n(100)
+	randomSeconds := rand.Int63n(oneYear) + rand.Int63n(100)
 	d := time.Now().Add(-1 * time.Duration(randomSeconds) * time.Second)
 	return d
 }

@@ -7,6 +7,7 @@ import (
 )
 
 type RandomDateTimeInRange struct {
+	name      string
 	min       string
 	max       string
 	allowNull bool
@@ -14,7 +15,6 @@ type RandomDateTimeInRange struct {
 
 // Value returns a random time.Time in the range specified by the New method
 func (r *RandomDateTimeInRange) Value() interface{} {
-	rand.Seed(time.Now().UnixNano())
 	randomSeconds := rand.Int63n(oneYear)
 	d := time.Now().Add(-1 * time.Duration(randomSeconds) * time.Second)
 	return d
@@ -32,15 +32,15 @@ func (r *RandomDateTimeInRange) Quote() string {
 }
 
 // NewRandomDateTimeInRange returns a new random date in the specified range
-func NewRandomDateTimeInRange(name string, min, max string, allowNull bool) *RandomDateInRange {
+func NewRandomDateTimeInRange(name string, min, max string, allowNull bool) *RandomDateTimeInRange {
 	if min == "" {
 		t := time.Now().Add(-1 * time.Duration(oneYear) * time.Second)
-		min = t.Format("2006-01-02")
+		min = t.Format("2006-01-02 15:03:04")
 	}
-	return &RandomDateInRange{name, min, max, allowNull}
+	return &RandomDateTimeInRange{name, min, max, allowNull}
 }
 
 // NewRandomDateTime returns a new random datetime between Now() and Now() - 1 year
-func NewRandomDateTime(name string, allowNull bool) *RandomDateInRange {
-	return &RandomDateInRange{name, "", "", allowNull}
+func NewRandomDateTime(name string, allowNull bool) *RandomDateTimeInRange {
+	return &RandomDateTimeInRange{name, "", "", allowNull}
 }
