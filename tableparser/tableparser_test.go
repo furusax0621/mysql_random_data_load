@@ -4,15 +4,15 @@ import (
 	"testing"
 	"time"
 
-	tu "github.com/furusax0621/mysql_random_data_load/testutils"
+	"github.com/furusax0621/mysql_random_data_load/testutils"
 	_ "github.com/go-sql-driver/mysql"
-	version "github.com/hashicorp/go-version"
-	log "github.com/sirupsen/logrus"
+	"github.com/hashicorp/go-version"
+	"github.com/sirupsen/logrus"
 )
 
 func TestParse(t *testing.T) {
-	db := tu.GetMySQLConnection(t)
-	v := tu.GetMinorVersion(t, db)
+	db := testutils.GetMySQLConnection(t)
+	v := testutils.GetMinorVersion(t, db)
 	var want *Table
 
 	// Patch part of version is stripped by GetMinorVersion so for these test
@@ -31,51 +31,51 @@ func TestParse(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if tu.UpdateSamples() {
-		tu.WriteJson(t, sampleFile, table)
+	if testutils.UpdateSamples() {
+		testutils.WriteJson(t, sampleFile, table)
 	}
-	tu.LoadJson(t, sampleFile, &want)
+	testutils.LoadJson(t, sampleFile, &want)
 
-	tu.Equals(t, want, table)
+	testutils.Equals(t, want, table)
 }
 
 func TestGetIndexes(t *testing.T) {
-	db := tu.GetMySQLConnection(t)
+	db := testutils.GetMySQLConnection(t)
 	want := make(map[string]Index)
-	tu.LoadJson(t, "indexes.json", &want)
+	testutils.LoadJson(t, "indexes.json", &want)
 
 	idx, err := getIndexes(db, "sakila", "film_actor")
-	if tu.UpdateSamples() {
-		tu.WriteJson(t, "indexes.json", idx)
+	if testutils.UpdateSamples() {
+		testutils.WriteJson(t, "indexes.json", idx)
 	}
-	tu.Ok(t, err)
-	tu.Equals(t, want, idx)
+	testutils.Ok(t, err)
+	testutils.Equals(t, want, idx)
 }
 
 func TestGetTriggers(t *testing.T) {
-	db := tu.GetMySQLConnection(t)
+	db := testutils.GetMySQLConnection(t)
 	want := []Trigger{}
 	v572, _ := version.NewVersion("5.7.2")
 	v800, _ := version.NewVersion("8.0.0")
 
 	sampleFile := "trigers-8.0.0.json"
-	if tu.GetVersion(t, db).LessThan(v800) {
+	if testutils.GetVersion(t, db).LessThan(v800) {
 		sampleFile = "trigers-5.7.2.json"
 	}
-	if tu.GetVersion(t, db).LessThan(v572) {
+	if testutils.GetVersion(t, db).LessThan(v572) {
 		sampleFile = "trigers-5.7.1.json"
 	}
 
-	tu.LoadJson(t, sampleFile, &want)
+	testutils.LoadJson(t, sampleFile, &want)
 
 	triggers, err := getTriggers(db, "sakila", "rental")
 	// fake timestamp to make it constant/testeable
 	triggers[0].Created.Time = time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
 
-	if tu.UpdateSamples() {
-		log.Info("Updating sample file: " + sampleFile)
-		tu.WriteJson(t, sampleFile, triggers)
+	if testutils.UpdateSamples() {
+		logrus.Info("Updating sample file: " + sampleFile)
+		testutils.WriteJson(t, sampleFile, triggers)
 	}
-	tu.Ok(t, err)
-	tu.Equals(t, want, triggers)
+	testutils.Ok(t, err)
+	testutils.Equals(t, want, triggers)
 }

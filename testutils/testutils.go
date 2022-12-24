@@ -17,7 +17,7 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
-	version "github.com/hashicorp/go-version"
+	"github.com/hashicorp/go-version"
 )
 
 var (

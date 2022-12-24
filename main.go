@@ -18,8 +18,8 @@ import (
 	"github.com/gosuri/uiprogress"
 	"github.com/kr/pretty"
 
-	log "github.com/sirupsen/logrus"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type cliOptions struct {
@@ -95,7 +95,7 @@ func main() {
 
 	opts, err := processCliParams()
 	if err != nil {
-		log.Fatal(err.Error())
+		logrus.Fatal(err.Error())
 	}
 
 	if *opts.Version {
@@ -134,36 +134,36 @@ func main() {
 
 	// SET TimeZone to UTC to avoid errors due to random dates & daylight saving valid values
 	if _, err = db.Exec(`SET @@session.time_zone = "+00:00"`); err != nil {
-		log.Printf("Cannot set time zone to UTC: %s\n", err)
+		logrus.Printf("Cannot set time zone to UTC: %s\n", err)
 		db.Close()
 		os.Exit(1)
 	}
 
 	table, err := tableparser.NewTable(db, *opts.Schema, *opts.TableName)
 	if err != nil {
-		log.Printf("cannot get table %s struct: %s", *opts.TableName, err)
+		logrus.Printf("cannot get table %s struct: %s", *opts.TableName, err)
 		db.Close()
 		os.Exit(1)
 	}
 
-	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 	if *opts.Debug {
-		log.SetLevel(log.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 		*opts.NoProgress = true
 	}
-	log.Debug(pretty.Sprint(table))
+	logrus.Debug(pretty.Sprint(table))
 
 	if len(table.Triggers) > 0 {
-		log.Warnf("There are triggers on the %s table that might affect this process:", *opts.TableName)
+		logrus.Warnf("There are triggers on the %s table that might affect this process:", *opts.TableName)
 		for _, t := range table.Triggers {
-			log.Warnf("Trigger %q, %s %s", t.Trigger, t.Timing, t.Event)
-			log.Warnf("Statement: %s", t.Statement)
+			logrus.Warnf("Trigger %q, %s %s", t.Trigger, t.Timing, t.Event)
+			logrus.Warnf("Statement: %s", t.Statement)
 		}
 	}
 
 	if *opts.Rows < 1 {
 		db.Close() // golint:noerror
-		log.Warnf("Number of rows < 1. There is nothing to do. Exiting")
+		logrus.Warnf("Number of rows < 1. There is nothing to do. Exiting")
 		os.Exit(1)
 	}
 
@@ -183,7 +183,7 @@ func main() {
 	}
 
 	if !*opts.Print {
-		log.Info("Starting")
+		logrus.Info("Starting")
 	}
 
 	// Example: want 11 rows with bulksize 4:
@@ -198,7 +198,7 @@ func main() {
 	remainder := *opts.Rows - count**opts.BulkSize
 	semaphores := makeSemaphores(*opts.MaxThreads)
 	rowValues := makeValueFuncs(db, table.Fields, *opts.Samples)
-	log.Debugf("Must run %d bulk inserts having %d rows each", count, *opts.BulkSize)
+	logrus.Debugf("Must run %d bulk inserts having %d rows each", count, *opts.BulkSize)
 
 	runInsertFunc := runInsert
 	if *opts.Print {
@@ -220,14 +220,14 @@ func main() {
 
 	okCount, err := run(db, table, bar, semaphores, rowValues, count, *opts.BulkSize, runInsertFunc, newLineOnEachRow)
 	if err != nil {
-		log.Errorln(err)
+		logrus.Errorln(err)
 	}
 	var okrCount, okiCount int // remainder & individual inserts OK count
 	if remainder > 0 {
-		log.Debugf("Must run 1 extra bulk insert having %d rows, to complete %d rows", remainder, *opts.Rows)
+		logrus.Debugf("Must run 1 extra bulk insert having %d rows, to complete %d rows", remainder, *opts.Rows)
 		okrCount, err = run(db, table, bar, semaphores, rowValues, 1, remainder, runInsertFunc, newLineOnEachRow)
 		if err != nil {
-			log.Errorln(err)
+			logrus.Errorln(err)
 		}
 	}
 
@@ -236,12 +236,12 @@ func main() {
 	totalOkCount := okCount + okrCount
 	retries := 0
 	if totalOkCount < *opts.Rows {
-		log.Debugf("Running extra %d individual inserts (duplicated keys?)", *opts.Rows-totalOkCount)
+		logrus.Debugf("Running extra %d individual inserts (duplicated keys?)", *opts.Rows-totalOkCount)
 	}
 	for totalOkCount < *opts.Rows && retries < *opts.MaxRetries {
 		okiCount, err = run(db, table, bar, semaphores, rowValues, *opts.Rows-totalOkCount, 1, runInsertFunc, newLineOnEachRow)
 		if err != nil {
-			log.Errorf("Cannot run extra insert: %s", err)
+			logrus.Errorf("Cannot run extra insert: %s", err)
 		}
 
 		retries++
@@ -250,7 +250,7 @@ func main() {
 
 	time.Sleep(500 * time.Millisecond) // Let the progress bar to update
 	if !*opts.Print {
-		log.Printf("%d rows inserted", totalOkCount)
+		logrus.Printf("%d rows inserted", totalOkCount)
 	}
 	db.Close()
 }
@@ -370,7 +370,7 @@ func generateInsertStmt(table *tableparser.Table) string {
 func runInsert(db *sql.DB, insertQuery string, resultsChan chan int, sem chan bool, wg *sync.WaitGroup) {
 	result, err := db.Exec(insertQuery)
 	if err != nil {
-		log.Debugf("Cannot run insert: %s", err)
+		logrus.Debugf("Cannot run insert: %s", err)
 		resultsChan <- 0
 		sem <- true
 		wg.Done()
@@ -379,7 +379,7 @@ func runInsert(db *sql.DB, insertQuery string, resultsChan chan int, sem chan bo
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Errorf("Cannot get rows affected after insert: %s", err)
+		logrus.Errorf("Cannot get rows affected after insert: %s", err)
 	}
 	resultsChan <- int(rowsAffected)
 	sem <- true
@@ -399,7 +399,7 @@ func makeValueFuncs(conn *sql.DB, fields []tableparser.Field, samples int64) ins
 				field.Constraint.ReferencedColumnName,
 				samples, field.DataType)
 			if err != nil {
-				log.Printf("cannot get samples for field %q: %s\n", field.ColumnName, err)
+				logrus.Printf("cannot get samples for field %q: %s\n", field.ColumnName, err)
 				continue
 			}
 			values = append(values, getters.NewRandomSample(field.ColumnName, samples, field.IsNullable))
@@ -435,7 +435,7 @@ func makeValueFuncs(conn *sql.DB, fields []tableparser.Field, samples int64) ins
 		case "binary", "varbinary":
 			values = append(values, getters.NewRandomBinary(field.ColumnName, field.CharacterMaximumLength.Int64, field.IsNullable))
 		default:
-			log.Printf("cannot get field type: %s: %s\n", field.ColumnName, field.DataType)
+			logrus.Printf("cannot get field type: %s: %s\n", field.ColumnName, field.DataType)
 		}
 	}
 

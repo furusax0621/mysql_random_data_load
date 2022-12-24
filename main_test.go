@@ -9,17 +9,17 @@ import (
 
 	"github.com/furusax0621/mysql_random_data_load/internal/getters"
 	"github.com/furusax0621/mysql_random_data_load/tableparser"
-	tu "github.com/furusax0621/mysql_random_data_load/testutils"
+	"github.com/furusax0621/mysql_random_data_load/testutils"
 )
 
 func TestGetSamples(t *testing.T) {
-	conn := tu.GetMySQLConnection(t)
+	conn := testutils.GetMySQLConnection(t)
 	var wantRows int64 = 100
 	samples, err := getSamples(conn, "sakila", "inventory", "inventory_id", wantRows, "int")
-	tu.Ok(t, err, "error getting samples")
+	testutils.Ok(t, err, "error getting samples")
 	_, ok := samples[0].(int64)
-	tu.Assert(t, ok, "Wrong data type.")
-	tu.Assert(t, int64(len(samples)) == wantRows,
+	testutils.Assert(t, ok, "Wrong data type.")
+	testutils.Assert(t, int64(len(samples)) == wantRows,
 		"Wrong number of samples. Have %d, want 100.", len(samples))
 }
 
@@ -64,18 +64,18 @@ func TestGenerateInsertData(t *testing.T) {
 	generateInsertData(wantRows, values, rowsChan)
 
 	wg.Wait()
-	tu.Assert(t, count == 3, "Invalid number of rows")
+	testutils.Assert(t, count == 3, "Invalid number of rows")
 }
 
 func TestGenerateInsertStmt(t *testing.T) {
 	var table *tableparser.Table
-	tu.LoadJson(t, "sakila.film.json", &table)
+	testutils.LoadJson(t, "sakila.film.json", &table)
 	want := "INSERT IGNORE INTO `sakila`.`film` " +
 		"(`title`,`description`,`release_year`,`language_id`," +
 		"`original_language_id`,`rental_duration`,`rental_rate`," +
-		"`length`,`replacement_cost`,`rating`,`special_features`," +
+		"`length`,`replacement_cost`,`rating`,`special_featestutilsres`," +
 		"`last_update`) VALUES "
 
 	query := generateInsertStmt(table)
-	tu.Equals(t, want, query)
+	testutils.Equals(t, want, query)
 }
