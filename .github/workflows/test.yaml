@@ -28,12 +28,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v3
-      - name: setup go 1.19
-        uses: actions/setup-go@v3
+      - uses: actions/checkout@v4
+      - name: set up go
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.19"
-          cache: true
+          go-version-file: 'go.mod'
       - name: prepare test
         run: mysql -uroot -proot -h127.0.0.1 -P3306 sakila < ./testdata/schema/sakila.sql
       - name: test with MySQL ${{ matrix.mysql }}
