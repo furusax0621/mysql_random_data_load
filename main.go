@@ -11,15 +11,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/furusax0621/mysql_random_data_load/internal/getters"
 	"github.com/furusax0621/mysql_random_data_load/tableparser"
 	"github.com/go-ini/ini"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gosuri/uiprogress"
 	"github.com/kr/pretty"
-
 	"github.com/sirupsen/logrus"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type cliOptions struct {
